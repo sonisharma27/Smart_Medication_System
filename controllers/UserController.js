@@ -1,4 +1,5 @@
 const User=require('../models/User');
+const Profile = require("../models/Profile");
 const mongoose=require('mongoose');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
@@ -56,7 +57,83 @@ async function doLogin(req,res) {
     }
     
 }
+async function createProfile(req,res){
+   try {
+    console.log("REQ.USER =", req.user);
+        const userId = req.user._id;
+
+        const { name, age, gender, mobile, medicalCondition, address } = req.body;
+
+        const existingProfile = await Profile.findOne({ user: userId });
+
+        if (existingProfile) {
+            return res.status(400).json({ message: "Profile already exists" });
+        }
+
+        const profile = await Profile.create({
+            user: userId,
+            name,
+            age,
+            gender,
+            mobile,
+            medicalCondition,
+            address
+        }); 
+        res.status(201).json({
+            message: "Profile created successfully",
+            data: profile
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+
+}
+async function getProfile(req,res){
+      try {
+        const userId = req.user._id;
+
+        const profile = await Profile.findOne({ user: userId });
+
+        if (!profile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+
+        res.status(200).json(profile);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+async function updateProfile(req, res) {
+  try {
+    const userId = req.user._id;
+
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { user: userId },
+            req.body,
+            { new: true }
+        );
+
+        if (!updatedProfile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            data: updatedProfile
+        });
+
+        
+
+    } catch (error) {  
+        res.status(500).json({ message: error.message });
+}
+}
 module.exports={
     doRegister,
-    doLogin
+    doLogin,
+    getProfile,
+    updateProfile,
+    createProfile
 }
