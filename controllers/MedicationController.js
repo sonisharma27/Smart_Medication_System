@@ -9,6 +9,7 @@ async function createMedication(req,res) {
             medicineName: req.body.medicineName,
             dosage: req.body.dosage,
             frequency: req.body.frequency,
+           reminderTime: req.body.reminderTime,
             startDate: req.body.startDate,
             endDate: req.body.endDate,
             notes: req.body.notes

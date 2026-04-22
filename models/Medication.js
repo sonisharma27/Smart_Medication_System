@@ -19,6 +19,10 @@ const medicationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    reminderTime:{
+        type:[String],
+        required: true
+    },
     startDate: {
         type: Date,
         required: true
